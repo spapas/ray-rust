@@ -1,73 +1,54 @@
+use cucumber::{given, then, when, World};
 use ray::Tuple;
-use cucumber::{given, when, then, World};
 use std::collections::HashMap;
-use cucumber::Parameter;
-
-#[derive(Parameter)]
-#[param(name = "tuple", regex = "tuple(3, -2, 5, 1)")]
-enum Tuple {}
-
+//use cucumber::Parameter;
 
 #[derive(Debug, Default, World)]
 pub struct TuplesWorld {
-    tuple: Tuple,
-    x: f64,
-    y: f64,
-    z: f64,
-    w: f64,
-    tuples: HashMap<String, Tuple>
+    tuples: HashMap<String, Tuple>,
 }
 
-//#[given(expr = "a tuple {float}, {float}, {float}, {float}")]
-fn given_a_tuple(world: &mut TuplesWorld, x: f64, y: f64, z: f64, w: f64) {
-    world.tuple = Tuple{x: x, y: y, z: z, w: w};
-    
-    world.x = x;
-    world.y = y;
-    world.z = z;
-    world.w = w;
-}
 
-#[then(expr = "a.{word} = {float}")]
-fn check_tuple(world: &mut TuplesWorld, attr: String, v: f64) {
+#[then(expr = "{word}.{word} = {float}")]
+fn check_tuple(world: &mut TuplesWorld, tuple_name: String, attr: String, v: f64) {
+    let z: &Tuple = &world.tuples[&tuple_name];
     let tv = match attr.as_str() {
-        "x" => world.tuple.x,
-        "y" => world.tuple.y,
-        "z" => world.tuple.z,
-        "w" => world.tuple.w,
-        _ => panic!("Expected x,y or z!")
+        "x" => z.x,
+        "y" => z.y,
+        "z" => z.z,
+        "w" => z.w,
+        _ => panic!("Expected x,y or z!"),
     };
-
-    assert!(v == tv)
+    assert!(tv == v)
 }
 
-#[then("a is a point")]
-fn check_is_point(world: &mut TuplesWorld) {
-    assert!(world.tuple.is_point());
-    assert!(!world.tuple.is_vector());
+#[then(expr = "{word} is a {word}")]
+fn check_is_something(world: &mut TuplesWorld, tuple_name: String, what: String) {
+    let z: &Tuple = &world.tuples[&tuple_name];
+    if what == "point" {
+        assert!(z.is_point());
+        assert!(!z.is_vector());
+    } else if what == "vector" {
+        assert!(!z.is_point());
+        assert!(z.is_vector());
+    }
 }
 
-#[then("a is not a point")]
-fn check_is_not_point(world: &mut TuplesWorld) {
-    assert!(!world.tuple.is_point());
-    assert!(world.tuple.is_vector());
+#[then(expr = "{word} is not a {word}")]
+fn check_is_not_something(world: &mut TuplesWorld, tuple_name: String, what: String) {
+    let z: &Tuple = &world.tuples[&tuple_name];
+    if what == "point" {
+        assert!(!z.is_point());
+        assert!(z.is_vector());
+    } else if what == "vector" {
+        assert!(z.is_point());
+        assert!(!z.is_vector());
+    }
 }
 
-#[then("a is a vector")]
-fn check_is_vector(world: &mut TuplesWorld) {
-    assert!(world.tuple.is_vector());
-    assert!(!world.tuple.is_point());
-}
-
-#[then("a is not a vector")]
-fn check_is_not_vector(world: &mut TuplesWorld) {
-    assert!(!world.tuple.is_vector());
-    assert!(world.tuple.is_point());
-}
-
-#[given(expr = "{word} a tuple {float}, {float}, {float}, {float}")]
-fn given_a_custom_tuple(world: &mut TuplesWorld, name: String, x: f64, y: f64, z: f64, w: f64) {
-    world.tuples.insert(name, Tuple{x: x, y: y, z: z, w: w});
+#[given(expr = "{word} a {tuple}")]
+fn given_a_custom_tuple(world: &mut TuplesWorld, name: String, t: Tuple) {
+    world.tuples.insert(name, t);
 }
 
 fn main() {
@@ -76,5 +57,3 @@ fn main() {
     // Cucumber is composable. :)
     futures::executor::block_on(TuplesWorld::run("tests/features"));
 }
-
-
