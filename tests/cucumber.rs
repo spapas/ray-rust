@@ -51,6 +51,18 @@ fn given_a_custom_tuple(world: &mut TuplesWorld, name: String, t: Tuple) {
     world.tuples.insert(name, t);
 }
 
+#[then(expr = "{word} + {word} = {tuple}")]
+fn check_add(world: &mut TuplesWorld, tuple1_name: String, tuple2_name: String, result: Tuple) {
+    let t1: Tuple = world.tuples[&tuple1_name].clone();
+    let t2: Tuple = world.tuples[&tuple2_name].clone();
+    let t3 = t1+t2;
+    assert!(t3.x == result.x);
+    assert!(t3.y == result.y);
+    assert!(t3.z == result.z);
+    assert!(t3.w == result.w);
+
+}
+
 fn main() {
     // You may choose any executor you like (`tokio`, `async-std`, etc.).
     // You may even have an `async` main, it doesn't matter. The point is that

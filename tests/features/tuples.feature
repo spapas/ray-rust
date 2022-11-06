@@ -20,4 +20,4 @@ Feature: Tuples Feature
     Scenario: Adding two tuples
         Given a1 a tuple(3, -2, 5, 1)
         And a2 a tuple(-2, 3, 1, 0)
-            Then a1 + a2 = tuple 1, 1, 6, 1
+            Then a1 + a2 = tuple(1, 1, 6, 1)
