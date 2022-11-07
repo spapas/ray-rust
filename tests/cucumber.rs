@@ -83,6 +83,86 @@ fn check_tuple(world: &mut TuplesWorld, tuple_name: String, result: Tuple) {
     assert!(t.w == result.w);
 }
 
+#[then(expr = "- {word} = {tuple}")]
+fn check_tuple_neg(world: &mut TuplesWorld, tuple_name: String, result: Tuple) {
+    let t: Tuple = -world.tuples[&tuple_name].clone();
+
+    assert!(t.x == result.x);
+    assert!(t.y == result.y);
+    assert!(t.z == result.z);
+    assert!(t.w == result.w);
+}
+
+#[then(expr = "{word} - {word} = vector {float}, {float}, {float}")]
+fn check_sub(world: &mut TuplesWorld, tuple1_name: String, tuple2_name: String, x: f64, y: f64, z: f64) {
+    let t1: Tuple = world.tuples[&tuple1_name].clone();
+    let t2: Tuple = world.tuples[&tuple2_name].clone();
+    let t3 = t1 - t2;
+    assert!(t3.is_vector());
+    assert!(t3.x == x);
+    assert!(t3.y == y);
+    assert!(t3.z == z);
+}
+
+#[then(expr = "{word} * {float} = {tuple}")]
+fn check_mul(world: &mut TuplesWorld, tuple_name: String, x: f64, result: Tuple) {
+    let t: Tuple = world.tuples[&tuple_name].clone() * x;
+
+    assert!(t.x == result.x);
+    assert!(t.y == result.y);
+    assert!(t.z == result.z);
+    assert!(t.w == result.w);
+}
+
+
+#[then(expr = "{word} \\/ {float} = {tuple}")]
+fn check_div(world: &mut TuplesWorld, tuple_name: String, x: f64, result: Tuple) {
+    let t: Tuple = world.tuples[&tuple_name].clone() / x;
+
+    assert!(t.x == result.x);
+    assert!(t.y == result.y);
+    assert!(t.z == result.z);
+    assert!(t.w == result.w);
+}
+
+#[then(expr = "magnitude\\({word}\\) = {float}")]
+fn check_magnitude(world: &mut TuplesWorld, tuple_name: String, result: f64) {
+    let t: Tuple = world.tuples[&tuple_name].clone();
+    assert!(t.magnitude() == result);
+}
+
+#[then(expr = "normalize\\({word}\\) = vector {float}, {float}, {float}")]
+fn check_normalize(world: &mut TuplesWorld, tuple_name: String, x: f64, y: f64, z: f64) {
+    let t: Tuple = world.tuples[&tuple_name].clone();
+    let t2 = t.normalize();
+    assert!(t2.is_vector());
+    assert!(t2.x == x);
+    assert!(t2.y == y);
+    assert!(t2.z == z);
+
+    assert!(t2.magnitude() == 1.0);
+}
+
+#[then(expr = "dot\\({word}, {word}\\) = {float}")]
+fn check_dot(world: &mut TuplesWorld, tuple1_name: String, tuple2_name: String, res: f64) {
+    let t1: Tuple = world.tuples[&tuple1_name].clone();
+    let t2: Tuple = world.tuples[&tuple2_name].clone();
+
+    assert!(t1.dot(&t2) == res);
+}
+
+#[then(expr = "cross\\({word}, {word}\\) = vector {float}, {float}, {float}")]
+fn check_cross(world: &mut TuplesWorld, tuple1_name: String, tuple2_name: String, x: f64, y: f64, z: f64) {
+    let t1: Tuple = world.tuples[&tuple1_name].clone();
+    let t2: Tuple = world.tuples[&tuple2_name].clone();
+    
+    let t3 = Tuple::vector(x, y, z);
+    
+    assert!(t1.cross(&t2) == t3);
+}
+
+
+
 fn main() {
     // You may choose any executor you like (`tokio`, `async-std`, etc.).
     // You may even have an `async` main, it doesn't matter. The point is that
