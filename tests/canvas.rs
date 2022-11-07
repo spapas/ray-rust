@@ -4,13 +4,13 @@ use std::collections::HashMap;
 
 #[derive(Debug, Default, World)]
 pub struct CanvasWorld {
-    canvases: HashMap<String, &mut Canvas>,
+    canvases: HashMap<String, Canvas>,
     colors: HashMap<String, Color>,
 }
 
 #[given(expr = "{word} is a canvas\\({int}, {int}\\)")]
 fn given_a_custom_tuple(world: &mut CanvasWorld, name: String, w: usize, h: usize) {
-    world.canvases.insert(name, &Canvas::canvas(w, h));
+    world.canvases.insert(name, Canvas::canvas(w, h));
 }
 
 #[then(expr = "{word}.{word} = {int}")]
@@ -37,8 +37,14 @@ fn given_a_custom_color(world: &mut CanvasWorld, name: String, t: Color) {
 
 #[when(expr = "write_pixel\\({word}, {int}, {int}, {word}\\)")]
 fn write_color(world: &mut CanvasWorld, cname: String, x: usize, y: usize, c: String) {
-    let ca: &Canvas = &mut world.canvases.get_mut(&cname).unwrap();
+    let ca: &mut Canvas = &mut world.canvases.get_mut(&cname).unwrap();
     let co: &Color = &world.colors[&c];
-    ca.write_pixel(x, y, co)
+    ca.write_pixel(x, y, co.clone())
+}
 
+#[then(expr = "pixel_at\\({word}, {int}, {int}\\) = {word}")]
+fn check_canvas_pixel(world: &mut CanvasWorld, cname: String, x: usize, y: usize, colorname: String) {
+    let ca: &Canvas = &world.canvases[&cname];
+    let co: &Color = &world.colors[&colorname];
+    assert!(ca.get_pixel(x, y) == *co)
 }
