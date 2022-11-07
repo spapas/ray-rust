@@ -1,5 +1,6 @@
 pub mod tuples;
 pub mod canon;
+pub mod colors;
 
 
 
