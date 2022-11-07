@@ -20,6 +20,24 @@ impl Tuple {
     pub fn is_point(&self) -> bool {
         self.w == 1.0
     }
+
+    pub fn point(x: f64, y: f64, z: f64) -> Tuple {
+        Tuple {
+            x,
+            y,
+            z,
+            w: 1.0,
+        }
+    }
+
+    pub fn vector(x: f64, y: f64, z: f64) -> Tuple {
+        Tuple {
+            x,
+            y,
+            z,
+            w: 0.0,
+        }
+    }
 }
 
 impl FromStr for Tuple {
@@ -73,6 +91,7 @@ mod tests {
         assert!(t3.y == 2.3);
         assert!(t3.z == 4.1);
         assert!(t3.w == 0.0);
-        //let t2: Tuple = " tuple(3, -2, 5, 1)".parse().unwrap();
     }
+
+
 }
