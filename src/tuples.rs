@@ -4,7 +4,7 @@ use regex::Regex;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 use std::cmp::Eq;
 
-#[derive(Debug, Default, Clone, Parameter)]
+#[derive(Debug, Default, Clone, Copy, Parameter)]
 #[param(name = "tuple", regex = r"tuple\(.+, .+, .+, .+\)")]
 pub struct Tuple {
     pub x: f64,
