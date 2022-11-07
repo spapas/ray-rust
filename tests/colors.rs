@@ -1,4 +1,4 @@
-use cucumber::{given, then, when, World};
+use cucumber::{given, then, World};
 use ray::Color;
 use std::collections::HashMap;
 
@@ -8,7 +8,7 @@ pub struct ColorsWorld {
 }
 
 #[given(expr = "{word} is a {color}")]
-fn given_a_custom_tuple(world: &mut ColorsWorld, name: String, t: Color) {
+fn given_a_custom_color(world: &mut ColorsWorld, name: String, t: Color) {
     world.colors.insert(name, t);
 }
 

@@ -13,6 +13,7 @@ fn main() {
     test[[1,1]] = 5.0;
     test[[1,0]] = 3.0;
     println!("{:?}", test);
+    
 
     let mut test2 = Array2::<colors::Color>::default((x, y));
     test2[[3,3]] = colors::Color::color(0.5, 0.5, 0.5);
