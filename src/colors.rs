@@ -11,6 +11,16 @@ pub struct Color {
     pub blue: f64,
 }
 
+impl Color {
+    pub fn color(r: f64, g: f64, b: f64) -> Color {
+        Color {
+            red: r,
+            green: g,
+            blue: b,
+        }
+    }
+}
+
 impl FromStr for Color {
     type Err = String;
     // https://doc.rust-lang.org/std/str/trait.FromStr.html#examples
@@ -21,12 +31,11 @@ impl FromStr for Color {
             .split(',')
             .map(|s| s.trim().parse::<f64>().unwrap());
 
-        let (red, green, blue): (f64, f64, f64) = match (colors.next(), colors.next(), colors.next()) {
-            (Some(r), Some(g), Some(b)) => {
-                (r, g, b)
-            }
-            _ => panic!(),
-        };
+        let (red, green, blue): (f64, f64, f64) =
+            match (colors.next(), colors.next(), colors.next()) {
+                (Some(r), Some(g), Some(b)) => (r, g, b),
+                _ => panic!(),
+            };
 
         Ok(Color { red, green, blue })
     }
@@ -92,6 +101,15 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_fn() {
+        let t: Color = Color {
+            red: 0.5,
+            green: 0.5,
+            blue: 0.5,
+        };
+        assert_eq!(t, Color::color(0.5, 0.5, 0.5));
+    }
+    #[test]
     fn test_parse() {
         let t: Color = "color(1, 2.3, 3)".parse().unwrap();
         assert!(t.red == 1.0);
@@ -116,7 +134,7 @@ mod tests {
         let t1: Color = "color(0.8, 0.6, 0.75)".parse().unwrap();
         let t2: Color = "color(0.8, 0.1, 0.25)".parse().unwrap();
         let t3 = t1 - t2;
-        
+
         assert!(t3.red == 0.0);
         assert!(t3.green == 0.5);
         assert!(t3.blue == 0.5);
