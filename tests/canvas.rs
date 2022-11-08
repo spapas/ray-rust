@@ -1,11 +1,13 @@
 use cucumber::{given, then, when, World};
 use ray::{Canvas, Color};
 use std::collections::HashMap;
+use cucumber::gherkin::Step;
 
 #[derive(Debug, Default, World)]
 pub struct CanvasWorld {
     canvases: HashMap<String, Canvas>,
     colors: HashMap<String, Color>,
+    ppms: HashMap<String, String>,
 }
 
 #[given(expr = "{word} is a canvas\\({int}, {int}\\)")]
@@ -46,5 +48,46 @@ fn write_color(world: &mut CanvasWorld, cname: String, x: usize, y: usize, c: St
 fn check_canvas_pixel(world: &mut CanvasWorld, cname: String, x: usize, y: usize, colorname: String) {
     let ca: &Canvas = &world.canvases[&cname];
     let co: &Color = &world.colors[&colorname];
-    assert!(ca.get_pixel(x, y) == *co)
+    assert!(ca.pixel_at(x, y) == *co)
 }
+
+#[when(expr = "{word} is canvas_to_ppm\\({word}\\)")]
+fn canvas_to_ppm(world: &mut CanvasWorld, pname: String, cname: String) {
+    let ca: &Canvas = &world.canvases[&cname];
+    let ppm = ca.to_ppm();
+    world.ppms.insert(pname, ppm);
+}
+
+fn ftf2(l: &str, lfrom: usize, lto: usize ) -> impl Iterator<Item=&str> {
+    let lfrom_ok = lfrom - 1;
+    let lto_ok = lto - 1;
+    l.lines().skip(lfrom_ok).take(lto_ok - lfrom_ok + 1)  
+
+}
+
+#[then(expr = "lines {int}-{int} of {word} are")]
+fn check_ppm_lines(world: &mut CanvasWorld, step: &Step, lfrom: usize, lto: usize, pname: String) {
+    let ppm: &String = &world.ppms[&pname];
+    let l1 = step.docstring().unwrap().lines();
+    let l2 = ftf2(ppm, lfrom, lto);
+    println!("l1: {:?}", step.docstring().unwrap());
+    println!("l2: {:?}", ppm);
+    for (x,y) in l1.zip(l2) { 
+        println!("x: {:?}, y: {:?}", x, y);
+        assert_eq!(x,  y);
+    }
+}
+
+
+#[when(expr = "every pixel of {word} is set to {color}")]
+fn canvas_set_color(world: &mut CanvasWorld, cname: String, color: Color) {
+    let ca: &mut Canvas = &mut world.canvases.get_mut(&cname).unwrap();
+    for x in 0..ca.width {
+        for y in 0..ca.height {
+            ca.write_pixel(x, y, color);
+        }
+    }
+}
+
+
+

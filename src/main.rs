@@ -1,11 +1,13 @@
 pub mod tuples;
 pub mod canon;
 pub mod colors;
+pub mod canvas;
 
 use ndarray::Array2;
 
 
 fn main() {
+    /*
     let x = 5;
     let y = 5;
     let mut test = Array2::<f64>::zeros((x, y));
@@ -18,4 +20,8 @@ fn main() {
     let mut test2 = Array2::<colors::Color>::default((x, y));
     test2[[3,3]] = colors::Color::color(0.5, 0.5, 0.5);
     println!("{:?}", test2);
+     */
+    let c = canvas::Canvas::canvas(10, 20);
+    println!("{:?}", c);
+    println!("{:?}", c.to_ppm());
 }

@@ -22,9 +22,47 @@ impl Canvas {
         self.data[[x, y]] = c;
     }
 
-    pub fn get_pixel(&self, x: usize, y: usize) -> Color {
+    pub fn pixel_at(&self, x: usize, y: usize) -> Color {
         self.data[[x, y]]
     }
+
+    pub fn to_ppm(&self) -> String {
+        let mut s = String::new();
+        s.push_str("P3\n");
+        s.push_str(&format!("{} {}\n", self.width, self.height));
+        s.push_str("255\n");
+        for y in 0..self.height {
+            let mut line = String::new();
+            for x in 0..self.width {
+                let c = self.pixel_at(x, y);
+                let r = (c.red * 256.0) as u8;
+                let g = (c.green * 256.0) as u8;
+                let b = (c.blue * 256.0) as u8;
+                line = fix_line(line, r);
+                line = fix_line(line, g);
+                line = fix_line(line, b);
+                //line.push_str(&format!("{} {} {} ", r, g, b));
+                //println!("line: {}", line.len());
+                
+                
+            }
+            s.push_str(&format!("{}\n", line.trim()));
+        }
+
+        s
+    }
+}
+
+fn fix_line(mut l: String, v: u8) -> String {
+    l.push_str(&format!("{}", v));
+    let len = l.len();
+    let should_split = len >= 70;
+    if should_split {
+        l.push_str("\n");
+    } else {
+        l.push_str(" ");
+    }
+    l
 }
 
 #[cfg(test)]
@@ -48,7 +86,19 @@ mod tests {
         let x = 2;
         let y = 2;
         ca.write_pixel(x, y, co);
-        assert!(ca.get_pixel(x, y) == co);
-        assert!(ca.get_pixel(x-1, y) == Color::color(0.0, 0.0, 0.0));
+        assert!(ca.pixel_at(x, y) == co);
+        assert!(ca.pixel_at(x-1, y) == Color::color(0.0, 0.0, 0.0));
     }
+
+    
+    #[test]
+    fn test_fix_line() {
+        let mut l = String::new();
+        l = fix_line(l, 1);
+        l = fix_line(l, 2);
+        l = fix_line(l, 3);
+        
+        assert_eq!(l.trim(), "1 2 3");
+    }
+
 }
