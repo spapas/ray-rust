@@ -47,3 +47,9 @@ Feature: Canvas Feature
 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
 153 255 204 153 255 204 153 255 204 153 255 204 153
 """
+
+
+    Scenario: PPM files are terminated by a newline character
+        Given c is a canvas(5, 3)
+            When ppm is canvas_to_ppm(c)
+                Then ppm ends with a newline character

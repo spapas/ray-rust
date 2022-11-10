@@ -89,5 +89,12 @@ fn canvas_set_color(world: &mut CanvasWorld, cname: String, color: Color) {
     }
 }
 
+#[then(expr = "{word} ends with a newline character")]
+fn check_ppm_newline(world: &mut CanvasWorld, pname: String) {
+    let ppm: &String = &world.ppms[&pname];
+    
+    assert!(ppm.ends_with("\n"))
+    
+}
 
 

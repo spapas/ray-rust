@@ -28,37 +28,44 @@ impl Canvas {
 
     pub fn to_ppm(&self) -> String {
         let mut s = String::new();
+        let mut line_len: u32 = 0;
         s.push_str("P3\n");
         s.push_str(&format!("{} {}\n", self.width, self.height));
         s.push_str("255\n");
         for y in 0..self.height {
-            let mut line = String::new();
+            
             for x in 0..self.width {
+                
                 let c = self.pixel_at(x, y);
                 let r = (c.red * 256.0) as u8;
                 let g = (c.green * 256.0) as u8;
                 let b = (c.blue * 256.0) as u8;
-                line = fix_line(line, r);
-                line = fix_line(line, g);
-                line = fix_line(line, b);
+                s = fix_line(s, r, &mut line_len);
+                s = fix_line(s, g, &mut line_len);
+                s = fix_line(s, b, &mut line_len);
                 //line.push_str(&format!("{} {} {} ", r, g, b));
                 //println!("line: {}", line.len());
                 
                 
             }
-            s.push_str(&format!("{}\n", line.trim()));
+            s = s.trim().to_string();
+            s.push_str("\n");
+            line_len = 0;
         }
 
         s
     }
 }
 
-fn fix_line(mut l: String, v: u8) -> String {
-    l.push_str(&format!("{}", v));
-    let len = l.len();
-    let should_split = len >= 70;
+fn fix_line(mut l: String, v: u8,  line_len: &mut u32 ) -> String {
+    let s = &format!("{}", v);
+    l.push_str(s);
+    *line_len = *line_len + 1 + s.len() as u32;
+
+    let should_split = *line_len >= 68;
     if should_split {
         l.push_str("\n");
+        *line_len = 0;
     } else {
         l.push_str(" ");
     }
@@ -94,11 +101,17 @@ mod tests {
     #[test]
     fn test_fix_line() {
         let mut l = String::new();
-        l = fix_line(l, 1);
-        l = fix_line(l, 2);
-        l = fix_line(l, 3);
+        let mut line_len = 0;
+        l = fix_line(l, 1, &mut line_len);
+        assert_eq!(l.len(), 2);
+        l = fix_line(l, 2, &mut line_len);
+        assert_eq!(l.len(), 4);
+        l = fix_line(l, 3, &mut line_len);
+        assert_eq!(l.len(), 6);
+        l = fix_line(l, 4, &mut line_len);
+        assert_eq!(l.len(), 8);
         
-        assert_eq!(l.trim(), "1 2 3");
+        assert_eq!(l.trim(), "1 2 3 4");
     }
 
 }
