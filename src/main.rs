@@ -3,7 +3,6 @@ pub mod canon;
 pub mod colors;
 pub mod canvas;
 
-use ndarray::Array2;
 
 
 fn main() {
@@ -21,7 +20,8 @@ fn main() {
     test2[[3,3]] = colors::Color::color(0.5, 0.5, 0.5);
     println!("{:?}", test2);
      */
-    let c = canvas::Canvas::canvas(10, 20);
-    println!("{:?}", c);
-    println!("{:?}", c.to_ppm());
+    //let c = canvas::Canvas::canvas(10, 20);
+    //println!("{:?}", c);
+    //println!("{:?}", c.to_ppm());
+    canon::runme();
 }
